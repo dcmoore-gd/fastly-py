@@ -10,7 +10,7 @@ import argparse
 
 import fastly
 
-from _version import __version__ as fastly_version
+from ._version import __version__ as fastly_version
 
 api = fastly.API()
 
@@ -271,33 +271,33 @@ def pick_version(args):
 # Services Commands
 def cmd_services(args):
     for service in api.services():
-        print "{name}: {id} #{version} @{updated_at}".format(**service.attrs)
+        print("{name}: {id} #{version} @{updated_at}".format(**service.attrs))
 
 
 def cmd_service(args):
     service_attrs = api.service(args.service_id).attrs
     service_attrs['_version'] = service_attrs.get('versions')[-1].get('number')
 
-    print "{name} #{_version} @{updated_at}".format(**service_attrs)
+    print("{name} #{_version} @{updated_at}".format(**service_attrs))
 
 
 def cmd_purge_service(args):
-    print api.service(args.service_id).purge_all()
+    print(api.service(args.service_id).purge_all())
 
 
 def cmd_newversion(args):
-    print api.service(args.service_id).version()
+    print(api.service(args.service_id).version())
 
 
 # Version Commands
 def cmd_versions(args):
     version_line = "{is_active}{number} @{updated_at} {is_locked}"
     for version in api.versions(args.service_id):
-        print version_line.format(
+        print(version_line.format(
             is_locked=('🔒' if version.attrs['locked'] else ' '),
             is_active=('*' if version.attrs['active'] else ' '),
             **version.attrs
-        )
+        ))
 
 
 def print_version(version, args=None):
@@ -305,11 +305,11 @@ def print_version(version, args=None):
         sys.stdout.write(str(version['number']))
         sys.stdout.flush()
     else:
-        print "Version {number}".format(**version)
-        print "\tCreated: {created_at}".format(**version)
-        print "\tUpdated: {updated_at}".format(**version)
-        print "\tActive: {}".format("Yes" if version["active"] else "No")
-        print "\tLocked: {}".format("Yes" if version["locked"] else "No")    
+        print("Version {number}".format(**version))
+        print("\tCreated: {created_at}".format(**version))
+        print("\tUpdated: {updated_at}".format(**version))
+        print("\tActive: {}".format("Yes" if version["active"] else "No"))
+        print("\tLocked: {}".format("Yes" if version["locked"] else "No"))
 
 
 def cmd_version(args):
@@ -348,40 +348,40 @@ def cmd_boilerplate(args):
 
 def cmd_generated_vcl(args):
     version = api.version(args.service_id, pick_version(args))
-    print version.generated_vcl()['content']
+    print(version.generated_vcl()['content'])
 
 
 # Backend Commands
 def cmd_backends(args):
     for backend in api.backends(args.service_id, pick_version(args)):
-        print json.dumps(backend.attrs, indent=4)
+        print(json.dumps(backend.attrs, indent=4))
 
 
 # VCL Commands
 def cmd_vcls(args):
     vcl_line = "{is_main}{name} @{updated_at}"
     for vcl in api.vcls(args.service_id, pick_version(args)):
-        print vcl_line.format(
+        print(vcl_line.format(
             is_main=('*' if vcl.attrs['main'] else ' '),
             **vcl.attrs
-        )
+        ))
 
 
 def cmd_vcl(args):
     vcl = api.vcl(args.service_id, pick_version(args), args.vcl_name)
     vcl_line = "### {is_main}{name} @{updated_at}\n\n{content}"
-    print vcl_line.format(
+    print(vcl_line.format(
         is_main=('*' if vcl.attrs['main'] else ' '),
         **vcl.attrs
-    )
+    ))
 
 
 def print_vcl(vcl):
     vcl_line = "{is_main}{name} #{version} @{updated_at}"
-    print vcl_line.format(
+    print(vcl_line.format(
         is_main=('*' if vcl['main'] else ' '),
         **vcl
-    )
+    ))
 
 
 def cmd_main(args):
@@ -416,10 +416,10 @@ def cmd_upload(args):
 def cmd_domains(args):
     for domain in api.domains(args.service_id, pick_version(args)):
         # print domain
-        print "{name} [{comment}]".format(**domain.attrs)
+        print("{name} [{comment}]".format(**domain.attrs))
 
 
 # Settings Commands
 def cmd_settings(args):
     settings = api.settings(args.service_id, pick_version(args))
-    print json.dumps(settings.attrs, indent=4)
+    print(json.dumps(settings.attrs, indent=4))
